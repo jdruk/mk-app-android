@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
     EditText password, email;
@@ -19,11 +22,25 @@ public class MainActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
 
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject("{\"titulo\":\"Os Arquivos JSON\",\"ano\":1998, \"genero\":\"Ficção\"}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            email.setText(jsonObject.getString("ano"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
     public void onLogin(final View view){
+
         final String email = this.email.getText().toString();
+
         String password = this.password.getText().toString();
 
 
