@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     EditText password, email;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
+        progressBar = findViewById(R.id.progressBar);
 
         JSONObject jsonObject = null;
         try {
@@ -39,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onLogin(final View view){
 
+
         final String email = this.email.getText().toString();
 
         String password = this.password.getText().toString();
-
-
+        progressBar.setVisibility(View.VISIBLE);
+        //view.setVisibility(View.GONE);
 //        BackgroundWorker backgroundWorker = new BackgroundWorker(this, new BackgroundWorker.AsynResponse() {
 //            @Override
 //            public void processFinish(String output) {
@@ -60,5 +64,6 @@ public class MainActivity extends AppCompatActivity {
 //        backgroundWorker.execute("login", email, password);
         Intent intent = new Intent(view.getContext(), Dashboard.class);
         startActivity(intent);
+        progressBar.setVisibility(View.GONE);
     }
 }

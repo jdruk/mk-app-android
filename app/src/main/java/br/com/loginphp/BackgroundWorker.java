@@ -28,7 +28,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
         void processFinish(String output);
     }
 
-    BackgroundWorker(Context context, AsynResponse asynResponse){
+    public BackgroundWorker(Context context, AsynResponse asynResponse){
         this.asynResponse = asynResponse;
         this.context = context;
     }
@@ -102,7 +102,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
         super.onPostExecute(s);
         alertDialog.setMessage(s);
         alertDialog.show();
-        //asynResponse.processFinish(s);
+        asynResponse.processFinish(s);
     }
 
 

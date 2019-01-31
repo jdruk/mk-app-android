@@ -13,10 +13,12 @@
 
     <color name="backgroudColor">#FCFCFC</color>
     <color name="lightGray">#EDEDED</color>
-    <color name="deepPurple">#7C4DFF</color>
+    <color name="deepPurple">#3D7499</color>
     <color name="yellow">#FFB300</color>
     <color name="green">#00BFA5</color>
-
+    <color name="blue">#1483CC</color>
+    <color name="orange">#FF5D40</color>
+    <color name="red">#CC1614</color>
 
     <color name="bg_login">#26ae90</color>
     <color name="bg_register">#2e3237</color>
@@ -31,4 +33,5 @@
     <color name="btn_login_bg">#eceef1</color>
     <color name="lbl_name">#333333</color>
     <color name="btn_logut_bg">#ff6861</color>
+
 </resources>
