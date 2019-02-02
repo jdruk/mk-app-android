@@ -9,7 +9,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
@@ -23,22 +25,28 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 public class Dashboard extends AppCompatActivity {
 
     private WebView webView;
     private Dialog myDialog;
 
+    private String name;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         initComponents();
+        Intent intent = getIntent();
+        name = intent.getExtras().getString("name");
     }
 
     public void showSpeedTest(View view){
         myDialog.show();
-        settingSizeDialog();
+        settingSizeDialog(true);
+        settingWebView("http://192.168.1.23/speed-teste/");
     }
 
     public void showSac(View view){
@@ -46,30 +54,72 @@ public class Dashboard extends AppCompatActivity {
     }
 
     public void getInvoice(View view){
-        download();
+
+        Intent i = new Intent(view.getContext(), InvoiceActivity.class);
+        startActivity(i);
+
+//        RequestQueue queue = Volley.newRequestQueue(view.getContext());
+//        String url = "http://192.168.1.23/speed-teste/login/boleto.php";
+//        StringRequest postRequest = new StringRequest(Request.Method.POST,url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                try {
+//                    Log.d("resposta", response);
+//
+//                    JSONObject jsonObject = new JSONObject(response);
+//                    int error = jsonObject.getInt("error");
+//                    if (error == 0){
+//                        myDialog.show();
+//                        settingSizeDialog(false);
+//                        settingWebView("http://central.renet-ce.com.br/boleto/18boleto.php?titulo=" + jsonObject.getString("titulo"));
+//                    }
+//                } catch (JSONException e) {
+//                    Toast.makeText(Dashboard.this, e.getMessage(), Toast.LENGTH_LONG);
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(Dashboard.this, error.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        }){
+//            @Override
+//            protected Map<String,String> getParams(){
+//                Map<String,String> params = new HashMap<String, String>();
+//                params.put("user_name",name);
+//                return params;
+//            }
+//        };
+//        queue.add(postRequest);
     }
 
     public void unlockNetwork(View view){
+
         Toast.makeText(this, "desbloquear", Toast.LENGTH_SHORT).show();
     }
 
-    public void settingSizeDialog(){
+    public void settingSizeDialog(boolean fullScreen){
         Display display = getWindowManager(). getDefaultDisplay();
         Point size = new Point();
         display. getSize(size);
         Window window = myDialog.getWindow();
-        int height = (int) (size.y * 0.8);
+        int height = ActionBar.LayoutParams.MATCH_PARENT;
+        if(fullScreen){
+             height = (int) (size.y * 0.8);
+        }
+
         window.setLayout(ActionBar.LayoutParams.MATCH_PARENT, height);
     }
 
-    public void settingWebView(){
+    public void settingWebView(String url){
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setFocusable(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("http://192.168.1.16/speed-teste");
+        webView.loadUrl(url);
     }
 
     public void initComponents(){
@@ -77,7 +127,7 @@ public class Dashboard extends AppCompatActivity {
         myDialog.setContentView(R.layout.speed_teste);
 
         webView = myDialog.findViewById(R.id.site);
-        settingWebView();
+  
     }
 
     private void openWhatsApp(String number) {
@@ -108,7 +158,7 @@ public class Dashboard extends AppCompatActivity {
     }
 
     public void showFile(){
-        File pdfFile = new File(Environment.getExternalStorageDirectory() + "/testthreepdf/" + "maven.pdf");  // -> filename = maven.pdf
+        File pdfFile = new File(Environment.getExternalStorageDirectory() + "/testthreepdf/" + "maven.pdf");
         Uri path = Uri.fromFile(pdfFile);
         Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
         pdfIntent.setDataAndType(path, "application/pdf");
@@ -117,7 +167,7 @@ public class Dashboard extends AppCompatActivity {
         try{
             startActivity(pdfIntent);
         }catch(ActivityNotFoundException e){
-            Toast.makeText(Dashboard.this, "No Application available to view PDF", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Dashboard.this, "Nenhum leitor de PDF no celular", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -125,6 +175,14 @@ public class Dashboard extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... strings) {
+            if(Build.VERSION.SDK_INT>=24){
+                try{
+                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                    m.invoke(null);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
             String fileUrl = strings[0];
             String fileName = strings[1];
             String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
