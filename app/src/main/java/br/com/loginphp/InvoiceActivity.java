@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ExpandableListView;
 
-import java.nio.file.AccessDeniedException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +44,6 @@ public  class InvoiceActivity extends AppCompatActivity {
         InvoiceAdapter adaptador = new InvoiceAdapter(this, lstGrupos, lstItensGrupo);
         // define o apadtador do ExpandableListView
         elvCompra.setAdapter(adaptador);
-        elvCompra.
+
     }
 }
